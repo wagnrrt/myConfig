@@ -12,6 +12,7 @@ o.laststatus = 3
 o.showmode = false
 o.splitkeep = "screen"
 
+o.termguicolors = true
 o.clipboard = "unnamedplus"
 o.cursorline = true
 o.cursorlineopt = "number"
