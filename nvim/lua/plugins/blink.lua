@@ -1,92 +1,131 @@
 return {
-  { "L3MON4D3/LuaSnip", keys = {} },
+	"saghen/blink.cmp",
+	version = "1.*",
+	event = { "InsertEnter", "CmdLineEnter" },
+	dependencies = {
+		"rafamadriz/friendly-snippets",
+		{
+			"L3MON4D3/LuaSnip",
+			dependencies = "rafamadriz/friendly-snippets",
+			opts = { history = true, updateevents = "TextChanged,TextChangedI" },
+			config = function(_, opts)
+				require("luasnip").config.set_config(opts)
+				-- se quiser usar config padrão do luasnip, pode chamar seu setup aqui
+			end,
+		},
+		{
+			"windwp/nvim-autopairs",
+			opts = {
+				fast_wrap = {},
+				disable_filetype = { "TelescopePrompt", "vim" },
+			},
+		},
+	},
+	opts = function()
+		local M = {}
 
-  {
-    "saghen/blink.cmp",
-    version = "*",
-    dependencies = {
-      "rafamadriz/friendly-snippets",
-      "onsails/lspkind.nvim",
-    },
-    config = function()
-      -- Configuração do blink.cmp
-      require("blink.cmp").setup({
-        snippets = { preset = "luasnip" },
-        cmdline = { enable = true },
-        signature = { enabled = true },
-        appearance = {
-          nerd_font_variant = "normal",
-        },
-        sources = {
-          default = { "lsp", "path", "snippets", "buffer" },
-          providers = {
-            cmdline = {
-              min_keyword_length = 2,
-            },
-          },
-        },
-        keymap = {
-          preset = "default",
-          ["<CR>"]     = { "accept", "fallback" },
-          ["<C-b>"]    = { "scroll_documentation_up", "fallback" },
-          ["<C-f>"]    = { "scroll_documentation_down", "fallback" },
-          ["<Tab>"]    = { "select_next", "snippet_forward", "fallback" },
-          ["<S-Tab>"]  = { "select_prev", "snippet_backward", "fallback" },
-        },
-        completion = {
-          menu = {
-            border = "single",
-            scrolloff = 1,
-            scrollbar = false,
-            draw = {
-              padding = 1,
-              gap = 1,
-              cursorline_priority = 20000,
-              columns = {
-                { "kind_icon" },
-                { "label", "kind", gap = 5 },
-              },
-              components = {
-                kind_icon = {
-          text = function(ctx)
-            local icon = ctx.kind_icon
-            if vim.tbl_contains({ "Path" }, ctx.source_name) then
-                local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
-                if dev_icon then
-                    icon = dev_icon
-                end
-            else
-                icon = require("lspkind").symbolic(ctx.kind, {
-                    mode = "symbol",
-                })
-            end
+		local menu_cols = { { "label" }, { "kind_icon" }, { "kind" } }
 
-            return icon .. ctx.icon_gap
-          end,
-        }
-              },
-            },
-          },
-          documentation = {
-            treesitter_highlighting = true,
-            window = {
-              border = "single",
-              scrollbar = false,
-              winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDocEnd",
-            },
-            auto_show = true,
-            auto_show_delay_ms = 500,
-          },
-        },
-      })
+		M.components = {
+			kind_icon = {
+				text = function(ctx)
+					local icons = {
+						Namespace = "󰌗",
+						Text = "󰉿",
+						Method = "󰆧",
+						Function = "󰆧",
+						Constructor = "",
+						Field = "󰜢",
+						Variable = "󰀫",
+						Class = "󰠱",
+						Interface = "",
+						Module = "",
+						Property = "󰜢",
+						Unit = "󰑭",
+						Value = "󰎠",
+						Enum = "",
+						Keyword = "󰌋",
+						Snippet = "",
+						Color = "󱓻",
+						File = "󰈚",
+						Reference = "󰈇",
+						Folder = "󰉋",
+						EnumMember = "",
+						Constant = "󰏿",
+						Struct = "󰙅",
+						Event = "",
+						Operator = "󰆕",
+						TypeParameter = "󰊄",
+						Table = "",
+						Object = "󰅩",
+						Tag = "",
+						Array = "[]",
+						Boolean = "",
+						Number = "",
+						Null = "󰟢",
+						Supermaven = "",
+						String = "󰉿",
+						Calendar = "",
+						Watch = "󰥔",
+						Package = "",
+						Copilot = "",
+						Codeium = "",
+						TabNine = "",
+						BladeNav = "",
+					}
+					return icons[ctx.kind] or ""
+				end,
+			},
+			kind = {
+				highlight = function()
+					return "Comment"
+				end,
+			},
+		}
 
-      -- Carregar snippets do VSCode
-      require("luasnip.loaders.from_vscode").lazy_load()
+		M.menu = {
+			scrollbar = false,
+			border = "rounded",
+			draw = {
+				padding = { 1, 1 },
+				gap = 2,
+				columns = menu_cols,
+				cursorline_priority = 20000,
+				components = M.components,
+			},
+		}
 
-      vim.api.nvim_set_hl(0, "Pmenu", { bg = nil })
-      vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { fg = '#A0A0A0' })
-      vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { fg = '#A0A0A0' })
-      vim.api.nvim_set_hl(0, "NormalFloat", { bg = nil })
-    end,
-  },
+		local opts = {
+			snippets = { preset = "luasnip" },
+			cmdline = { enabled = true },
+			appearance = { nerd_font_variant = "normal" },
+			sources = { default = { "lsp", "snippets", "buffer", "path" } },
+
+			keymap = {
+				preset = "default",
+				["<CR>"] = { "accept", "fallback" },
+				["<C-b>"] = { "scroll_documentation_up", "fallback" },
+				["<C-f>"] = { "scroll_documentation_down", "fallback" },
+				["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+				["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+			},
+
+			completion = {
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+					window = { border = "rounded" },
+				},
+
+				menu = M.menu,
+			},
+		}
+
+		vim.api.nvim_set_hl(0, "Pmenu", { bg = nil })
+		vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { fg = "#A0A0A0" })
+		vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { fg = "#A0A0A0" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = nil })
+
+		return opts
+	end,
 }
