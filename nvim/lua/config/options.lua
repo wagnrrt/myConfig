@@ -6,6 +6,11 @@ local g = vim.g
 
 o.statusline = "%!v:lua.require('stl.default')()"
 
+vim.opt.guicursor = {
+	"n-v-c:ver25",
+	"i:hor20",
+}
+
 g.mapleader = ","
 
 o.laststatus = 3

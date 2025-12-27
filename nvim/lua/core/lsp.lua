@@ -2,8 +2,7 @@ vim.lsp.enable({
 	"lua_ls",
 	"ts_ls",
 	"clangd",
-	"eslint",
-	"tailwindcss",
+	"tailwindcss_ls",
 })
 
 vim.diagnostic.config({

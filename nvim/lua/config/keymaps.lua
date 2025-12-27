@@ -14,9 +14,6 @@ map("n", "<C-k>", "<C-w>k", { desc = "switch window up" })
 
 map("n", "<Esc>", "<cmd>noh<CR>", { desc = "general clear highlights" })
 
-map("n", "<C-s>", "<cmd>w<CR>", { desc = "general save file" })
-map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
-
 map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "toggle line number" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
 
@@ -57,32 +54,13 @@ map(
 -- terminal
 map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
 
--- new terminals
-map("n", "<leader>h", function()
-	require("nvchad.term").new({ pos = "sp" })
-end, { desc = "terminal new horizontal term" })
-
-map("n", "<leader>v", function()
-	require("nvchad.term").new({ pos = "vsp" })
-end, { desc = "terminal new vertical term" })
-
--- toggleable
-map({ "n", "t" }, "<A-v>", function()
-	require("nvchad.term").toggle({ pos = "vsp", id = "vtoggleTerm" })
-end, { desc = "terminal toggleable vertical term" })
-
-map({ "n", "t" }, "<A-h>", function()
-	require("nvchad.term").toggle({ pos = "sp", id = "htoggleTerm" })
-end, { desc = "terminal toggleable horizontal term" })
-
-map({ "n", "t" }, "<A-i>", function()
-	require("nvchad.term").toggle({ pos = "float", id = "floatTerm" })
-end, { desc = "terminal toggle floating term" })
-
+-- toggleable terminals
+map({ "n", "t" }, "<A-v>", "<cmd>ToggleTermVertical<CR>", { desc = "terminal toggleable vertical term" })
+map({ "n", "t" }, "<A-h>", "<cmd>ToggleTermHorizontal<CR>", { desc = "terminal toggleable horizontal term" })
+map({ "n", "t" }, "<A-i>", "<cmd>ToggleTermFloat<CR>", { desc = "terminal toggle floating term" })
 -- whichkey
 map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
 
 map("n", "<leader>wk", function()
 	vim.cmd("WhichKey " .. vim.fn.input("WhichKey: "))
 end, { desc = "whichkey query lookup" })
-
